@@ -1,0 +1,6 @@
+solara
+astropy
+specutils
+jdaviz
+uvicorn
+solara-server[all]

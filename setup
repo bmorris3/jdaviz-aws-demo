@@ -1,0 +1,11 @@
+#!/bin/bash
+sudo su
+yum update -y
+yum install python3.11.x86_64 -y
+python3 -m venv venv
+python3 -m ensurepip
+curl -O https://raw.githubusercontent.com/bmorris3/jdaviz-aws-demo/refs/heads/main/solara/requirements.txt
+curl -O https://raw.githubusercontent.com/bmorris3/jdaviz-aws-demo/refs/heads/main/solara/app.py
+python3 -m pip install -U pip
+python3 -m pip install -r requirements.txt
+SOLARA_APP=app.py uvicorn --host 0.0.0.0 --port 8765 solara.server.starlette:app
