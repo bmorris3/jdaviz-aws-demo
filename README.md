@@ -2,13 +2,9 @@
 ### EC2 Security group settings
 
 Under "Firewall", choose "Create security group" and check
-"Allow HTTP traffic from the internet". Otherwise, add rules to your
-security group for:
-
+to allow SSH, HTTP and HTTPS. Plus, add a rule to your
+security group for solara at:
 ```
-HTTP port 80 source 0.0.0.0/0
-HTTPS port 443 0.0.0.0/0
-SSH port 22 source 0.0.0.0/0
 Custom TCP port 8765 source 0.0.0.0/0
 ```
 
