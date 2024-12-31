@@ -12,6 +12,8 @@ Custom TCP port 8765 source 0.0.0.0/0
 
 ### User Data
 
+Under "Advanced Details", at the very bottom, add the following to the textbox under "User Data":
+
 ```bash
 curl -O https://raw.githubusercontent.com/bmorris3/jdaviz-aws-demo/refs/heads/main/setup
 chmod 700 setup
