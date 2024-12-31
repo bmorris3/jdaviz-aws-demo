@@ -5,6 +5,9 @@
     margin: 0;
 }
 .v-content.jdaviz__content--not-in-notebook {
-    height: 100vh;
-    max-height: 100vh;
+    height: 80vh;
+    width: 100vw;
+    border-color: black;
+    border-width: 1px;
+    border-style: solid;
 }

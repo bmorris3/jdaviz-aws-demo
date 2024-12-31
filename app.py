@@ -46,8 +46,7 @@ def Page():
 
     ipyvue.register_component_from_file('g-viewer-tab', "container.vue", jdaviz.__file__)
 
-    #solara.Style(Path(jdaviz.__file__).parent / "solara.css")
-    solara.Style("solara.css")
+    solara.Style(Path(__file__).parent / "solara.css")
 
     n_channels = 1000
     flux = np.random.normal(size=n_channels) * u.electron
@@ -57,6 +56,8 @@ def Page():
     viz = Specviz()
     viz.load_data(spectrum)
 
-    with solara.Column(margin=5):
+    with solara.Column():
+        solara.Markdown("# Demo: jdaviz on AWS")
+
         with solara.Row():
             solara.display(viz.app)
