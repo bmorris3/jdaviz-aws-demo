@@ -14,8 +14,24 @@ import ipyvue
 
 import jdaviz
 from jdaviz.app import custom_components
+from astroquery.mast import Observations
 
-config = 'Cubeviz'
+Observations.enable_cloud_dataset()
+
+cubes = Observations.query_criteria(target_name='Io', proposal_id=1373, instrument_name='MIRI/IFU')
+cubes.rename_column('dataURL', 'dataURI')
+
+images = Observations.query_criteria(target_name='Jupiter*', proposal_id=1373, instrument_name='NIRCAM/IMAGE', filters='*M')
+images.rename_column('dataURL', 'dataURI')
+
+s3_uris = sorted(Observations.get_cloud_uris(cubes) + Observations.get_cloud_uris(images))
+
+filename_to_s3_uri = {os.path.basename(uri): uri for uri in s3_uris}
+
+filenames = list(filename_to_s3_uri.keys())
+filename = solara.reactive(filenames[0])
+
+
 data_list = []
 load_data_kwargs = {}
 jdaviz_verbosity = 'error'
@@ -39,6 +55,7 @@ def on_kernel_start():
 def Page():
     ipysplitpanes.SplitPanes()
     ipygoldenlayout.GoldenLayout()
+
     for name, path in custom_components.items():
         ipyvue.register_component_from_file(None, name,
                                             os.path.join(os.path.dirname(jdaviz.__file__), path))
@@ -47,9 +64,11 @@ def Page():
 
     solara.Style(Path(__file__).parent / "solara.css")
 
-    viz = jdaviz.Cubeviz()
+    config = 'Imviz' if 'i2d' in filename.value else 'Cubeviz'
 
-    uri = 's3://stpubdata/jwst/public/jw01373/L3/t/o031/jw01373-o031_t007_miri_ch1-shortmediumlong_s3d.fits'
+    viz = getattr(jdaviz, config)()
+
+    uri = filename_to_s3_uri[filename.value]
     with fits.open(uri, use_fsspec=True, fsspec_kwargs={"anon": True}) as file:
         hdulist = file[:]
 
@@ -57,7 +76,13 @@ def Page():
 
     with solara.Column():
         solara.Markdown("# Demo: jdaviz on AWS")
-        solara.Markdown(f"Load MIRI IFU cube from MAST's holdings on AWS S3 at {uri}")
+        # solara.Markdown(f"Load MIRI IFU cube from MAST's holdings on AWS S3 at {uri.value}")
+
+        solara.Select(
+            label="Dataset",
+            values=filenames,
+            value=filename
+        )
 
         with solara.Row():
             solara.display(viz.app)
